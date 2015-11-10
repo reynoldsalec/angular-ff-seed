@@ -1,11 +1,13 @@
-# Angular Course from rangle.io
+# Angular 1.x Future Friendly Seed
 
-This repository contains handout materials and code for rangle.io's AngularJS
-training course, focusing on building Angular 1.x applications the Angular 2 way.
+This repository is a potential starting point for an Angular 1.x project that attempts to use Angular 2.x concepts
+to provide a future-friendly starting point for an Angular project while 2.x is still under development.
 
-This is meant to be used as a part of the course, which is
-normally offered as a 2-3 day event. See [http://rangle.io/javascript-training.html](http://rangle.io/javascript-training.html) for more
-information.
+The starting point for the code was borrowed from Rangle.io's course material. As time goes on it may diverge more
+as Kalamuna's coding standards and Angular evolve. However, for now, a good introduction to the theories behind this
+codebase can be found in the [course training material](https://github.com/rangle/ngcourse-next), and of course the best
+introduction is taking the [Rangle.io course](http://rangle.io/javascript-training.html)!
+
 
 ## The Handouts
 

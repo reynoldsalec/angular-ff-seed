@@ -1,7 +1,7 @@
 {
-  "name": "ngcourse-next",
+  "name": "angular-ff-seed",
   "version": "1.0.0",
-  "description": "Rangle.io NgCourse-Next",
+  "description": "Angular Future Friendly Seed",
   "license": "MIT",
   "scripts": {
     "postinstall": "npm run typings",
@@ -13,11 +13,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rangle/ngcourse-next.git"
+    "url": "https://github.com/kalamuna/angular-ff-seed.git"
   },
-  "author": "Igor Krivanov",
+  "author": "Alec Reynolds",
   "bugs": {
-    "url": "https://github.com/rangle/ngcourse-next/issues"
+    "url": "https://github.com/kalamuna/angular-ff-seed/issues"
   },
   "dependencies": {
     "angular": "^1.4.7",
