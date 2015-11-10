@@ -1,0 +1,5 @@
+.DS_Store
+node_modules
+app/__build/
+app/__typings/
+handout/*.html
