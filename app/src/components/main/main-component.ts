@@ -1,12 +1,14 @@
 import {AuthenticationStore}
 from '../../stores/authentication/authentication-store';
 import {UsersStore} from '../../stores/users/users-store';
+import {AccountStore} from '../../stores/account/account-store';
 import {AuthenticationActions}
 from '../../actions/authentication/authentication-actions';
 
 export class MainComponent {
 
-  private _user: any;
+  private _account: any;
+  private _token: String;
   private _displayName: String;
   private _errorMessage: String;
 
@@ -28,28 +30,32 @@ export class MainComponent {
     '$scope',
     'authenticationStore',
     'authenticationActions',
-    'usersStore'
+    'accountStore',
+    'usersStore',
+    '_'
   ];
 
   constructor(
     private $scope: angular.IScope,
     private authenticationStore: AuthenticationStore,
     private authenticationActions: AuthenticationActions,
-    private usersStore: UsersStore) {
+    private accountStore: AccountStore,
+    private usersStore: UsersStore,
+    private _: any) {
 
     let authSubscription =
-      this.authenticationStore.userSubject.subscribe(
-        user => this._user = user,
+      this.authenticationStore.tokenSubject.subscribe(
+        token => this._token = token,
         error => this._errorMessage = error);
 
-    let usersSubscription =
-      this.usersStore.usersSubject.subscribe(
-        users => this._displayName = users[this.user.data.username].displayName,
+    let accountSubscription =
+      this.accountStore.accountSubject.subscribe(
+        account => this._account = account,
         error => this._errorMessage = error);
 
     this.$scope.$on('$destroy', () => {
       authSubscription.dispose();
-      usersSubscription.dispose();
+      accountSubscription.dispose();
     });
   }
 
@@ -61,8 +67,12 @@ export class MainComponent {
     this.authenticationActions.logout();
   }
 
-  get user() {
-    return this._user;
+  get account() {
+    return this._account;
+  }
+
+  get isAuthenticated() {
+    return !this._.isEmpty(this._token);
   }
 
   get displayName() {

@@ -7,9 +7,10 @@ export class UserActions {
 
   constructor(private dispatcher: Rx.Subject<any>) { }
 
-  getUsers() {
+  getUsers(token) {
     this.dispatcher.onNext({
-      actionType: USER_ACTIONS.GET_USERS
+      actionType: USER_ACTIONS.GET_USERS,
+      token: token
     });
   }
 

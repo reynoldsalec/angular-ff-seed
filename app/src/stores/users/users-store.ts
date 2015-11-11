@@ -6,9 +6,6 @@ export class UsersStore {
 
   private _users: Map<String, any>;
   private _usersSubject: Rx.ReplaySubject<any>;
-  
-  /* Authenticated methods */
-  private getUsers: Function;
 
   static $inject = [
     'koast',
@@ -20,14 +17,12 @@ export class UsersStore {
     private dispatcher: Rx.Subject<any>
   ) {
     this.registerActionHandlers();
-    this.addAuthenticatedMethods();
     this.initialize();
   }
 
   private initialize() {
     this._users = Map<String, any>();
     this._usersSubject = new Rx.ReplaySubject(1);
-    this.getUsers();
   }
 
   get usersSubject() {
@@ -37,30 +32,19 @@ export class UsersStore {
   private registerActionHandlers() {
     this.dispatcher.filter(
       (action) => action.actionType === USER_ACTIONS.GET_USERS)
-      .subscribe(() => this.getUsers());
+      .subscribe((action) => this.getUsers(action.token));
   }
 
-  private addAuthenticatedMethods() {
-    this.getUsers = makeAuthenticatedMethod(
-      this.koast,
-      () => Rx.Observable.fromPromise(
-        this.koast.queryForResources('users'))
-        .subscribe(
-        (users: Object[]) => {
-          this._users.clear();
-
-          this._users = this._users.withMutations(mutableUsersMap => {
-            users.forEach((value: any) => {
-              mutableUsersMap.set(value.username, value);
-            });
-
-          });
-
+  private getUsers(token) {
+    Rx.Observable.fromPromise(
+      this.server.get('/users', {params: {token: token}}))
+      .subscribe(
+        response => {
+          this._users = response;
           this.emitChange();
         },
-        error => this.emitError(error))
-    );
-  }
+        error => this.emitError(error));
+}
 
   private emitChange() {
     this._usersSubject.onNext(this.users);

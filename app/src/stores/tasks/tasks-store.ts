@@ -1,4 +1,5 @@
 import {makeAuthenticatedMethod} from '../../utils/store-utils';
+import {ServerService} from '../../services/server/server-service';
 import {TASK_ACTIONS} from '../../actions/action-constants';
 
 import {List, fromJS} from 'immutable';
@@ -8,31 +9,22 @@ export class TasksStore {
   private _tasksSubject: Rx.ReplaySubject<any>;
   private _tasks: List<any>;
 
-  /* Authenticated methods */
-  private getTasks: Function;
-  private addTask: Function;
-  private updateTask: Function;
-  private deleteTask: Function;
-  private getTask: Function;
-
   static $inject = [
-    'koast',
+    'server',
     'dispatcher'
   ];
   
   constructor(
-    private koast,
+    private server,
     private dispatcher: Rx.Subject<any>
   ) {
     this.registerActionHandlers();
-    this.addAuthenticatedMethods();
     this.initialize();
   }
 
   private initialize() {
     this._tasks = List();
     this._tasksSubject = new Rx.ReplaySubject(1);
-    this.getTasks();
   }
 
   get tasksSubject() {
@@ -42,8 +34,8 @@ export class TasksStore {
   private registerActionHandlers() {
     this.dispatcher.filter(
       action => action.actionType === TASK_ACTIONS.GET_TASKS)
-      .subscribe(action => this.getTasks());
-
+      .subscribe(action => this.getTasks(action.token));
+/*
     this.dispatcher.filter(
       action => action.actionType === TASK_ACTIONS.ADD_TASK)
       .subscribe(action => this.addTask(action.newTask));
@@ -51,27 +43,26 @@ export class TasksStore {
     this.dispatcher.filter(
       action => action.actionType === TASK_ACTIONS.UPDATE_TASK)
       .subscribe(action => this.updateTask(action.task));
+*/
   }
 
-  private addAuthenticatedMethods() {
-
-    this.getTasks = makeAuthenticatedMethod(
-      this.koast,
-      () => Rx.Observable.fromPromise(
-        this.koast.queryForResources('tasks'))
-        .subscribe(
-        tasks => {
-          this._tasks = fromJS(tasks);
+  private getTasks(token) {
+    Rx.Observable.fromPromise(
+      this.server.get('/questions', {params: {token: token}}))
+      .subscribe(
+        response => {
+          this._tasks = response;
           this.emitChange();
         },
-        error => this.emitError(error))
-    );
+        error => this.emitError(error));
+  }
 
-    this.getTask = makeAuthenticatedMethod(
-      this.koast,
-      id => this.koast.getResource('tasks', { _id: id })
-    );
+  private getTask(id) {
+    return this._tasks[id];
+  }
 
+    /*
+    @todo: reimplement.
     this.addTask = makeAuthenticatedMethod(
       this.koast,
       task => Rx.Observable.fromPromise(
@@ -85,7 +76,7 @@ export class TasksStore {
         .then(this.getTasks)
     );
   }
-
+  */
   private emitChange() {
     this._tasksSubject.onNext(this.tasks);
   }

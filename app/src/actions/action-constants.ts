@@ -12,3 +12,7 @@ export const TASK_ACTIONS = {
 export const USER_ACTIONS = {
   GET_USERS: 'GET_USERS'
 };
+
+export const ACCOUNT_ACTIONS = {
+  GET_ACCOUNT: 'GET_ACCOUNT'
+};

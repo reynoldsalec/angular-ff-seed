@@ -39,19 +39,7 @@ describe('TasksStore', () => {
     };
 
     angular.mock.inject($log => _$log = $log);
-    
-    _mockKoast = {
-      user: {
-        whenAuthenticated: () => Promise.resolve(),
-        data: {
-          username: 'alice'
-        }
-      },
-      queryForResources: sinon.spy(() => Promise.resolve(_mockTasks)),
-      createResource: sinon.spy(() => Promise.resolve(
-        _mockTasks.push(_mockNewTask)))
-    };
-    
+
     _scheduler = new Rx.TestScheduler();
   });
 
@@ -63,7 +51,7 @@ describe('TasksStore', () => {
         newTask: _mockNewTask
       }));
     
-    let tasksStore = new TasksStore(_mockKoast, _mockDispatcher);
+    let tasksStore = new TasksStore(_mockServerService, _mockDispatcher);
 
     tasksStore.tasksSubject.subscribe(
       tasks => {

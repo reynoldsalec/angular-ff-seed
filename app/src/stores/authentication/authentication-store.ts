@@ -5,8 +5,8 @@ export class AuthenticationStore {
 
   private _tokenKey: string;
   private authenticated: Promise<any>;
-  private _userSubject: Rx.ReplaySubject<any>;
-  private _user: any;
+  private _tokenSubject: Rx.ReplaySubject<any>;
+  private _token: any;
 
   static $inject = [
     '$window',
@@ -24,12 +24,12 @@ export class AuthenticationStore {
   }
   
   private initialize() {
-    this._userSubject = new Rx.ReplaySubject(1);
+    this._tokenSubject = new Rx.ReplaySubject(1);
     this._tokenKey = 'KoastToken';
   }
   
   get userSubject() {
-    return this._userSubject;  
+    return this._tokenSubject;  
   }
   
   private registerActionHandlers() {
@@ -43,18 +43,18 @@ export class AuthenticationStore {
   }
 
   private emitChange() {
-    this._userSubject.onNext(this.user);
+    this._tokenSubject.onNext(this._token);
   }
 
   private emitError(error) {
-    this._userSubject.onError(error);
+    this._tokenSubject.onError(error);
   }
   
   private login(credentials) {
     Rx.Observable.fromPromise(
       this.server.post('/auth', credentials))
         .subscribe(
-          response => {
+          (response) => {
             this.saveToken(response.token);
             this.emitChange();
           },
@@ -81,23 +81,29 @@ export class AuthenticationStore {
     */
   }
   
-  get user() {
-    return this._user;
+  get token() {
+    return this._token;
+  }
+
+  get tokenSubject() {
+    return this._tokenSubject;
   }
 
   private setTokenKey(tokenKey) {
     this._tokenKey = tokenKey;
   }
 
-  private saveToken(params) {
-    this.$window.localStorage.setItem(this._tokenKey, params.token);
-  }
-
-  private loadToken() {
-    return this.$window.localStorage.getItem(this._tokenKey);
+  private saveToken(token) {
+    //this.$window.localStorage.setItem(this._tokenKey, params.token);
+    this._token = token;
   }
 
   private clearToken() {
+    this._token = null;
     return this.$window.localStorage.removeItem(this._tokenKey);
+  }
+
+  public isAuthenticated() {
+    return this.authenticated;
   }
 }

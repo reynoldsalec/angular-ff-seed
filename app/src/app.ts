@@ -17,7 +17,8 @@ import {
 import {
   TasksStore, 
   UsersStore, 
-  AuthenticationStore
+  AuthenticationStore,
+  AccountStore
 } from './stores';
 
 import {
@@ -32,7 +33,8 @@ import {
 import {
   TaskActions, 
   UserActions, 
-  AuthenticationActions
+  AuthenticationActions,
+  AccountActions
 } from './actions';
 
 
@@ -67,6 +69,10 @@ angular.module('ngcourse.users', [])
   .service('usersStore', UsersStore)
   .service('usersActions', UserActions);
 
+angular.module('ngcourse.account', [])
+    .service('accountStore', AccountStore)
+    .service('accountActions', AccountActions);
+
 angular.module('ngcourse.server', [])
   .service('server', ServerService);
 
@@ -77,10 +83,17 @@ angular.module('ngcourse', [
   'ngcourse.authentication',
   'ngcourse.tasks',
   'ngcourse.users',
+  'ngcourse.account',
   'ngcourse.server',
   'ngcourse.router',
   'ngcourse.dispatcher',
   'koast'])
+  .factory('_', ['$window',
+    function($window) {
+      // place lodash include before angular
+      return $window._;
+    }
+  ])
   .directive(
     MainComponent.selector,
     MainComponent.directiveFactory)

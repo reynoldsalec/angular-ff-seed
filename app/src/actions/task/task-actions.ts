@@ -7,9 +7,10 @@ export class TaskActions {
   constructor(
     private dispatcher: Rx.Subject<any>) { }
 
-  getTasks() {
+  getTasks(token) {
     this.dispatcher.onNext({
-      actionType: TASK_ACTIONS.GET_TASKS
+      actionType: TASK_ACTIONS.GET_TASKS,
+      token: token
     });
   }
 

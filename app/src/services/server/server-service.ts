@@ -10,8 +10,8 @@ export class ServerService {
     private API_BASE_URL
   ) { }
 
-  public get(path) {
-    return this.$http.get(this.API_BASE_URL + path)
+  public get(path, data) {
+    return this.$http.get(this.API_BASE_URL + path, data)
       .then(response => response.data);
   }
 
