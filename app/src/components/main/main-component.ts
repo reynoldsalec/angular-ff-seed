@@ -53,13 +53,16 @@ export class MainComponent {
         response => {
           this._token = response.token;
           this._id = response.id;
-          this.getAccount();
+          this.getAccount(response.id, response.token);
         },
         error => this._errorMessage = error);
 
     let accountSubscription =
       this.accountStore.accountSubject.subscribe(
-        account => this._account = account,
+        account => {
+          console.log(account);
+          this._account = account;
+        },
         error => this._errorMessage = error);
 
     this.$scope.$on('$destroy', () => {
@@ -80,10 +83,8 @@ export class MainComponent {
     return this._account;
   }
 
-  private getAccount() {
-    if (this._.isEmpty(this._token) && this._.isEmpty(this._id)) {
-      this.accountActions.getAccount(this._id, this._token);
-    }
+  private getAccount(id, token) {
+    this.accountActions.getAccount(id, token);
   }
 
   get isAuthenticated() {

@@ -41,7 +41,6 @@ export class AccountStore {
             this.server.get('/users/' + id, {params: {token: token}}))
             .subscribe(
                 response => {
-                    console.log(response);
                     this._account = response;
                     this.emitChange();
                 },
@@ -57,6 +56,7 @@ export class AccountStore {
     }
 
     get account() {
-        return this._account.toJS();
+        console.log(this._account);
+        return this._account;
     }
 }
