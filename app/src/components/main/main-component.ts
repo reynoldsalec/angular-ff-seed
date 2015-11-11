@@ -4,11 +4,14 @@ import {UsersStore} from '../../stores/users/users-store';
 import {AccountStore} from '../../stores/account/account-store';
 import {AuthenticationActions}
 from '../../actions/authentication/authentication-actions';
+import {AccountActions}
+  from '../../actions/account/account-actions';
 
 export class MainComponent {
 
   private _account: any;
   private _token: String;
+  private _id: String;
   private _displayName: String;
   private _errorMessage: String;
 
@@ -31,6 +34,7 @@ export class MainComponent {
     'authenticationStore',
     'authenticationActions',
     'accountStore',
+    'accountActions',
     'usersStore',
     '_'
   ];
@@ -40,12 +44,17 @@ export class MainComponent {
     private authenticationStore: AuthenticationStore,
     private authenticationActions: AuthenticationActions,
     private accountStore: AccountStore,
+    private accountActions: AccountActions,
     private usersStore: UsersStore,
     private _: any) {
 
     let authSubscription =
       this.authenticationStore.tokenSubject.subscribe(
-        token => this._token = token,
+        response => {
+          this._token = response.token;
+          this._id = response.id;
+          this.getAccount();
+        },
         error => this._errorMessage = error);
 
     let accountSubscription =
@@ -69,6 +78,12 @@ export class MainComponent {
 
   get account() {
     return this._account;
+  }
+
+  private getAccount() {
+    if (this._.isEmpty(this._token) && this._.isEmpty(this._id)) {
+      this.accountActions.getAccount(this._id, this._token);
+    }
   }
 
   get isAuthenticated() {

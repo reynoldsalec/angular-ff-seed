@@ -7,6 +7,7 @@ export class AuthenticationStore {
   private authenticated: Promise<any>;
   private _tokenSubject: Rx.ReplaySubject<any>;
   private _token: any;
+  private _id: any;
 
   static $inject = [
     '$window',
@@ -43,7 +44,7 @@ export class AuthenticationStore {
   }
 
   private emitChange() {
-    this._tokenSubject.onNext(this._token);
+    this._tokenSubject.onNext({token: this._token, id: this._id});
   }
 
   private emitError(error) {
@@ -55,30 +56,18 @@ export class AuthenticationStore {
       this.server.post('/auth', credentials))
         .subscribe(
           (response) => {
-            this.saveToken(response.token);
+            console.log(response);
+            this.saveAuth(response);
             this.emitChange();
           },
           error => this.emitError(error)); 
   }
 
   private logout() {
-    console.log(this.authenticated);
-    if (this.authenticated) {
-      this.authenticated = null;
-      // this.clearToken();
-      // todo: set token?
+    if (!_.isEmpty(this._token)) {
+      this.clearToken();
+      this.emitChange();
     }
-    /*
-    Rx.Observable.fromPromise(
-      this.authenticationService.logout())
-        .subscribe(
-          data => {
-            console.log(data);
-            // this._user = this.koast.user;
-            this.emitChange();
-          },
-          error => this.emitError(error));
-    */
   }
   
   get token() {
@@ -93,17 +82,16 @@ export class AuthenticationStore {
     this._tokenKey = tokenKey;
   }
 
-  private saveToken(token) {
+  private saveAuth(response) {
     //this.$window.localStorage.setItem(this._tokenKey, params.token);
-    this._token = token;
+    this._token = response.token;
+    this._id = response.id;
   }
 
   private clearToken() {
     this._token = null;
-    return this.$window.localStorage.removeItem(this._tokenKey);
+    this._id = null;
+    //return this.$window.localStorage.removeItem(this._tokenKey);
   }
 
-  public isAuthenticated() {
-    return this.authenticated;
-  }
 }

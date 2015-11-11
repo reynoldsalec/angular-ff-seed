@@ -41,6 +41,7 @@ export class AccountStore {
             this.server.get('/users/' + id, {params: {token: token}}))
             .subscribe(
                 response => {
+                    console.log(response);
                     this._account = response;
                     this.emitChange();
                 },
